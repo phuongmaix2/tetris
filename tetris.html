@@ -1,15 +1,69 @@
 <html>
-  <head>
-    <title> tetris </title>
-  </head>
 
-  <body>
+<head>
+    <title> tetris </title>
+</head>
+
+<body>
     <div style="text-align: center; top: 50px; position: relative;">
-      <canvas id="canvas" width="400" height="600" style="border: 2px solid black;"/>
+        <canvas id="canvas" width="400" height="600" style="border: 2px solid black;" />
     </div>
 
     <script>
-      
+        const SCALE_VALUE = 20;
+        // Each cell size 20 so width = 400/20 = 20, height = 600/20 = 30
+        const BOARD_WIDTH = 20;
+        const BOARD_HEIGHT = 30;
+
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        ctx.scale(SCALE_VALUE, SCALE_VALUE);
+
+        let board = create_matrix(BOARD_WIDTH, BOARD_HEIGHT);
+        let tetromino = create_tetromino();
+
+        function create_tetromino() {
+            // Square
+            return {
+                x: 9,
+                y: 0,
+                matrix:
+                    [[1, 1],
+                    [1, 1]]
+            };
+        }
+
+        function create_matrix(width, height) {
+            let m = new Array(height).fill(0);
+            for (let i = 0; i < height; i++) {
+                m[i] = new Array(width).fill(0);
+            }
+            return m;
+        }
+
+        function draw_tetromino() {
+            draw_matrix(tetromino.x, tetromino.y, tetromino.matrix);
+        }
+
+        function draw_board() {
+            draw_matrix(0, 0, board);
+        }
+
+        function draw_matrix(x, y, matrix) {
+            // console.log("height: " + matrix.length + ", width: " + matrix[0].length);
+            for (let i = 0; i < matrix.length; i++) {
+                for (let j = 0; j < matrix[i].length; j++)
+                    if (matrix[i][j] == 1) {
+                        ctx.fillStyle = "red";
+                        ctx.fillRect(j + x, i + y, 1, 1)
+                        // console.log("i: " + i + ", j: " + j);
+                    }
+            }
+        }
+
+        draw_board()
+        draw_tetromino()
     </script>
-  </body>
+</body>
+
 </html>
