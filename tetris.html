@@ -22,6 +22,16 @@
         let board = create_matrix(BOARD_WIDTH, BOARD_HEIGHT);
         let tetromino = create_tetromino();
 
+        this.interval = setInterval(updateGameArea, 100);
+
+        function updateGameArea() {
+            ctx.fillStyle = "WHITE";
+            ctx.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
+
+            draw_board();
+            draw_tetromino();
+        }
+
         function create_tetromino() {
             // Square
             return {
@@ -61,8 +71,45 @@
             }
         }
 
-        draw_board()
-        draw_tetromino()
+        function go_left() {
+            tetromino.x--;
+            if (hit_land(tetromino)) {
+                tetromino.x++;
+            }
+        }
+
+        function go_right() {
+            tetromino.x++;
+            if (hit_land(tetromino)) {
+                tetromino.x--;
+            }
+        }
+
+        function hit_land() {
+            let matrix = tetromino.matrix;
+            let x = tetromino.x;
+            let y = tetromino.y;
+            for (let i = 0; i < matrix.length; i++) {
+                for (let j = 0; j < matrix[i].length; j++) {
+                    if (matrix[i][j] !== 0 && (board[y + i] === undefined || board[y + i][x + j] !== 0)) {
+                        //(board[y + i] === undefined || board[y + i][x + j] === undefined || board[y + i][x + j] == 1)) {
+                        //console.log("hit land: (" + x, + ", " + y + ")");
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        document.addEventListener('keydown', handle_keyboard);
+        function handle_keyboard(event) {
+            switch (event.keyCode) {
+                case 37: go_left(); break; // Left arrow
+                case 39: go_right(); break; // Right arrow
+            }
+        }
+
+
     </script>
 </body>
 
