@@ -85,6 +85,17 @@
             }
         }
 
+        function go_down() {
+			tetromino.y++;
+			if (hit_land(tetromino)) {
+				// console.log("hit land y: " + tetromino.y);
+				tetromino.y--;
+
+				tetromino = create_tetromino();
+
+			}
+		}
+
         function hit_land() {
             let matrix = tetromino.matrix;
             let x = tetromino.x;
@@ -106,6 +117,7 @@
             switch (event.keyCode) {
                 case 37: go_left(); break; // Left arrow
                 case 39: go_right(); break; // Right arrow
+                case 40: go_down(); break; // Down arrow
             }
         }
 
