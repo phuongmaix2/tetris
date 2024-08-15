@@ -6,7 +6,7 @@
 
 <body>
     <div style="text-align: center; top: 50px; position: relative;">
-        <canvas id="canvas" width="400" height="600" style="border: 2px solid black;" />
+        <canvas id="canvas" width="400" height="600" style="border: 2px solid black;"></canvas>
     </div>
 
     <script>
@@ -28,6 +28,7 @@
             ctx.fillStyle = "WHITE";
             ctx.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
 
+            clear_lines()
             draw_board();
             draw_tetromino();
 
@@ -65,7 +66,7 @@
             // console.log("height: " + matrix.length + ", width: " + matrix[0].length);
             for (let i = 0; i < matrix.length; i++) {
                 for (let j = 0; j < matrix[i].length; j++)
-                    if (matrix[i][j] == 1) {
+                    if (matrix[i][j] === 1) {
                         ctx.fillStyle = "red";
                         ctx.fillRect(j + x, i + y, 1, 1)
                         // console.log("i: " + i + ", j: " + j);
@@ -99,13 +100,13 @@
         }
 
         function drop_tetromino() {
-			tetromino.y++;
-			if (hit_land()) {
-				tetromino.y--;
-				merge_land();
-				tetromino = create_tetromino();
-			}
-		}
+            tetromino.y++;
+            if (hit_land()) {
+                tetromino.y--;
+                merge_land();
+                tetromino = create_tetromino();
+            }
+        }
 
         function merge_land() {
             let matrix = tetromino.matrix;
@@ -134,6 +135,24 @@
                 }
             }
             return false;
+        }
+
+        function clear_lines() {
+            for (let y = BOARD_HEIGHT - 1; y >= 0; y--) {
+                let row_full = true;
+                for (let x = 0; x < BOARD_WIDTH; x++) {
+                    if (board[y][x] === 0) {
+                        row_full = false;
+                        break;
+                    }
+                }
+                if (row_full) {
+                    board.splice(y, 1); // Remove filled row
+                    board.unshift(Array(BOARD_WIDTH).fill(0)); // Add empty row on top
+                    y++; // Recheck the same row index after shifting
+                }
+            }
+
         }
 
         document.addEventListener('keydown', handle_keyboard);
