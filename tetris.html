@@ -30,6 +30,8 @@
 
             draw_board();
             draw_tetromino();
+
+            drop_tetromino();
         }
 
         function create_tetromino() {
@@ -73,21 +75,21 @@
 
         function go_left() {
             tetromino.x--;
-            if (hit_land(tetromino)) {
+            if (hit_land()) {
                 tetromino.x++;
             }
         }
 
         function go_right() {
             tetromino.x++;
-            if (hit_land(tetromino)) {
+            if (hit_land()) {
                 tetromino.x--;
             }
         }
 
         function go_down() {
             tetromino.y++;
-            if (hit_land(tetromino)) {
+            if (hit_land()) {
                 // console.log("hit land y: " + tetromino.y);
                 tetromino.y--;
                 merge_land();
@@ -95,6 +97,15 @@
 
             }
         }
+
+        function drop_tetromino() {
+			tetromino.y++;
+			if (hit_land()) {
+				tetromino.y--;
+				merge_land();
+				tetromino = create_tetromino();
+			}
+		}
 
         function merge_land() {
             let matrix = tetromino.matrix;
