@@ -86,15 +86,28 @@
         }
 
         function go_down() {
-			tetromino.y++;
-			if (hit_land(tetromino)) {
-				// console.log("hit land y: " + tetromino.y);
-				tetromino.y--;
+            tetromino.y++;
+            if (hit_land(tetromino)) {
+                // console.log("hit land y: " + tetromino.y);
+                tetromino.y--;
+                merge_land();
+                tetromino = create_tetromino();
 
-				tetromino = create_tetromino();
+            }
+        }
 
-			}
-		}
+        function merge_land() {
+            let matrix = tetromino.matrix;
+            let x = tetromino.x;
+            let y = tetromino.y;
+            // console.log(board);
+            for (let i = 0; i < matrix.length; i++) {
+                for (let j = 0; j < matrix[i].length; j++) {
+                    board[y + i][x + j] = matrix[i][j];
+                }
+            }
+            // console.log(board);
+        }
 
         function hit_land() {
             let matrix = tetromino.matrix;
