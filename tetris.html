@@ -80,7 +80,6 @@
         }
 
         function draw_matrix(x, y, matrix, color) {
-
             for (let i = 0; i < matrix.length; i++) {
                 for (let j = 0; j < matrix[i].length; j++)
                     if (matrix[i][j] !== 0) {
@@ -116,6 +115,28 @@
             }
         }
 
+        function rotate_tetromino() {
+            // Rotate the matrix 90 degrees clockwise
+            let rotated = [];
+            for (let i = 0; i < tetromino.matrix[0].length; i++) {
+                let row = [];
+                for (let j = 0; j < tetromino.matrix.length; j++) {
+                    row.push(tetromino.matrix[j][i]);
+                }
+                rotated.push(row);
+            }
+
+            rotated.reverse();
+            tetromino.matrix = rotated;
+
+        }
+
+        function rotatez_tetromino() {
+            rotate_tetromino();
+            rotate_tetromino();
+            rotate_tetromino();
+        }
+
         function drop_tetromino() {
             tetromino.y++;
             if (hit_land()) {
@@ -146,7 +167,7 @@
             let y = tetromino.y;
             for (let i = 0; i < matrix.length; i++) {
                 for (let j = 0; j < matrix[i].length; j++) {
-                    if (matrix[i][j] !== 0 && (board[y + i] === undefined || board[y + i][x + j] !== 0)) {
+                    if (matrix[i][j] !== 0 && (board[y + i] === undefined || board[y + i][x + j] === undefined || board[y + i][x + j] !== 0)) {
                         return true;
                     }
                 }
@@ -178,6 +199,8 @@
                 case 37: go_left(); break; // Left arrow
                 case 39: go_right(); break; // Right arrow
                 case 40: go_down(); break; // Down arrow
+                case 38: rotate_tetromino(); break; // Up arrow
+                case 90: rotatez_tetromino(); break; // "z"
             }
         }
 
