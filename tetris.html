@@ -19,6 +19,17 @@
         const ctx = canvas.getContext("2d");
         ctx.scale(SCALE_VALUE, SCALE_VALUE);
 
+        const TETROMINOES = [
+            { shape: [[1, 1, 1, 1]], color: "cyan" }, // I
+            { shape: [[1, 1], [1, 1]], color: "yellow" }, // O
+            { shape: [[1, 1, 1], [0, 1, 0]], color: "purple" }, // T	
+            { shape: [[0, 1, 1], [1, 1, 0]], color: "green" }, // S
+            { shape: [[1, 1, 0], [0, 1, 1]], color: "red" }, // Z
+            { shape: [[1, 0, 0], [1, 1, 1]], color: "blue" }, // J
+            { shape: [[0, 0, 1], [1, 1, 1]], color: "orange" } // L
+
+        ];
+
         let board = create_matrix(BOARD_WIDTH, BOARD_HEIGHT);
         let tetromino = create_tetromino();
 
@@ -36,15 +47,15 @@
         }
 
         function create_tetromino() {
-            // Square
+            const randomTetromino = TETROMINOES[Math.floor(Math.random() * TETROMINOES.length)];
             return {
-                x: 9,
+                x: Math.floor(BOARD_WIDTH / 2) - Math.floor(randomTetromino.shape[0].length / 2),
                 y: 0,
-                matrix:
-                    [[1, 1],
-                    [1, 1]]
+                matrix: randomTetromino.shape,
+                color: randomTetromino.color
             };
         }
+
 
         function create_matrix(width, height) {
             let m = new Array(height).fill(0);
@@ -55,20 +66,26 @@
         }
 
         function draw_tetromino() {
-            draw_matrix(tetromino.x, tetromino.y, tetromino.matrix);
+            draw_matrix(tetromino.x, tetromino.y, tetromino.matrix, tetromino.color);
         }
 
         function draw_board() {
-            draw_matrix(0, 0, board);
+            for (let y = 0; y < board.length; y++) {
+                for (let x = 0; x < board[y].length; x++) {
+                    if (board[y][x] !== 0) { // Only draw non-empty cells
+                        draw_matrix(x, y, [[1]], board[y][x]); // Pass color to draw
+                    }
+                }
+            }
         }
 
-        function draw_matrix(x, y, matrix) {
-            // console.log("height: " + matrix.length + ", width: " + matrix[0].length);
+        function draw_matrix(x, y, matrix, color) {
+
             for (let i = 0; i < matrix.length; i++) {
                 for (let j = 0; j < matrix[i].length; j++)
-                    if (matrix[i][j] === 1) {
-                        ctx.fillStyle = "red";
-                        ctx.fillRect(j + x, i + y, 1, 1)
+                    if (matrix[i][j] !== 0) {
+                        ctx.fillStyle = color;
+                        ctx.fillRect(j + x, i + y, 1, 1);
                         // console.log("i: " + i + ", j: " + j);
                     }
             }
@@ -115,7 +132,9 @@
             // console.log(board);
             for (let i = 0; i < matrix.length; i++) {
                 for (let j = 0; j < matrix[i].length; j++) {
-                    board[y + i][x + j] = matrix[i][j];
+                    if (matrix[i][j] !== 0) {  // Only update non-empty cells
+                        board[y + i][x + j] = tetromino.color;
+                    }
                 }
             }
             // console.log(board);
@@ -128,8 +147,6 @@
             for (let i = 0; i < matrix.length; i++) {
                 for (let j = 0; j < matrix[i].length; j++) {
                     if (matrix[i][j] !== 0 && (board[y + i] === undefined || board[y + i][x + j] !== 0)) {
-                        //(board[y + i] === undefined || board[y + i][x + j] === undefined || board[y + i][x + j] == 1)) {
-                        //console.log("hit land: (" + x, + ", " + y + ")");
                         return true;
                     }
                 }
