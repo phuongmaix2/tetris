@@ -1,37 +1,51 @@
 <html>
 
 <head>
-    <title> tetris </title>
+    <title>tetris</title>
 </head>
 
-<body>
-    <div style="text-align: center; top: 50px; position: relative;">
-        <canvas id="canvas" width="400" height="600" style="border: 2px solid black;"></canvas>
+<body style="background: linear-gradient(to top, #2c3e50, #bdc3c7);">
+    <div style="text-align:center; top: 50px; position: relative;">
+        <canvas id="canvas" width="300" height="500" style="border: 5px solid #34495e; border-radius: 10px;"></canvas>
     </div>
+    <div
+        style="position: absolute; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);">
+        <p id="score"
+            style="font-size: 24px; color: white; font-weight: bold; margin: 0; font-family: 'Arial', sans-serif;">
+            Score: 0</p>
+    </div>
+    <button id="restart-button" onclick="restartGame()"
+        style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #2980b9; color: white; font-size: 18px; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Restart</button>
+        
 
     <script>
-        const SCALE_VALUE = 20;
-        // Each cell size 20 so width = 400/20 = 20, height = 600/20 = 30
-        const BOARD_WIDTH = 20;
-        const BOARD_HEIGHT = 30;
+        const SCALE_VALUE = 35;
+        const BOARD_WIDTH = 10;
+        const BOARD_HEIGHT = 16;
 
         const canvas = document.getElementById("canvas");
+        canvas.width = BOARD_WIDTH * SCALE_VALUE;
+        canvas.height = BOARD_HEIGHT * SCALE_VALUE;
+
         const ctx = canvas.getContext("2d");
         ctx.scale(SCALE_VALUE, SCALE_VALUE);
 
         const TETROMINOES = [
-            { shape: [[1, 1, 1, 1]], color: "cyan" }, // I
-            { shape: [[1, 1], [1, 1]], color: "yellow" }, // O
-            { shape: [[1, 1, 1], [0, 1, 0]], color: "purple" }, // T	
-            { shape: [[0, 1, 1], [1, 1, 0]], color: "green" }, // S
-            { shape: [[1, 1, 0], [0, 1, 1]], color: "red" }, // Z
-            { shape: [[1, 0, 0], [1, 1, 1]], color: "blue" }, // J
-            { shape: [[0, 0, 1], [1, 1, 1]], color: "orange" } // L
+            { shape: [[1, 1, 1, 1]], color: "#6DD0F0" }, // I
+            { shape: [[1, 1], [1, 1]], color: "#FFC549" }, // O
+            { shape: [[1, 1, 1], [0, 1, 0]], color: "#775AFF" }, // T	
+            { shape: [[0, 1, 1], [1, 1, 0]], color: "#00B487" }, // S
+            { shape: [[1, 1, 0], [0, 1, 1]], color: "#F23F3A" }, // Z
+            { shape: [[1, 0, 0], [1, 1, 1]], color: "#0e264d" }, // J
+            { shape: [[0, 0, 1], [1, 1, 1]], color: "#db6832" } // L
 
         ];
 
         let board = create_matrix(BOARD_WIDTH, BOARD_HEIGHT);
         let tetromino = create_tetromino();
+
+        let score = 0;
+        updateScore();
 
         this.interval = setInterval(updateGameArea, 100);
 
@@ -43,7 +57,7 @@
             draw_board();
             draw_tetromino();
 
-            drop_tetromino();
+            //drop_tetromino();
         }
 
         function create_tetromino() {
@@ -112,10 +126,15 @@
                 merge_land();
                 tetromino = create_tetromino();
 
+                if (hit_land()) {
+                    clearInterval(this.interval); // Stop the game loop
+                    alert("Game Over!");
+                }
+
             }
         }
 
-        function rotate_tetromino() {
+        function rotatez_tetromino() {
             // Rotate the matrix 90 degrees clockwise
             let rotated = [];
             for (let i = 0; i < tetromino.matrix[0].length; i++) {
@@ -131,10 +150,10 @@
 
         }
 
-        function rotatez_tetromino() {
-            rotate_tetromino();
-            rotate_tetromino();
-            rotate_tetromino();
+        function rotate_tetromino() {
+            rotatez_tetromino();
+            rotatez_tetromino();
+            rotatez_tetromino();
         }
 
         function drop_tetromino() {
@@ -187,10 +206,23 @@
                 if (row_full) {
                     board.splice(y, 1); // Remove filled row
                     board.unshift(Array(BOARD_WIDTH).fill(0)); // Add empty row on top
+                    score += 10;
                     y++; // Recheck the same row index after shifting
                 }
             }
+            updateScore();
+        }
 
+        function updateScore() {
+            document.getElementById("score").innerText = `Score: ${score}`;
+        }
+
+        function restartGame() {
+            board = create_matrix(BOARD_WIDTH, BOARD_HEIGHT);
+            tetromino = create_tetromino();
+            score = 0;
+            updateScore();
+            this.interval = setInterval(updateGameArea, 100); // Restart loop
         }
 
         document.addEventListener('keydown', handle_keyboard);
@@ -204,6 +236,7 @@
             }
         }
 
+        setInterval(drop_tetromino, 700); // Auto drop every 700
 
     </script>
 </body>
